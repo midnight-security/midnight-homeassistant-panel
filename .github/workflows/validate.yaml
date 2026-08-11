@@ -23,6 +23,21 @@ jobs:
     steps:
       - uses: "actions/checkout@v4"
 
+      # This integration has no config model of its own - it drives
+      # midnight_alerts' real config-subentry flows, so the test suite runs
+      # against the real package rather than a hand-maintained double that
+      # could silently drift from midnight_alerts' actual contract.
+      - name: Checkout midnight-homeassistant-911
+        uses: "actions/checkout@v4"
+        with:
+          repository: midnight-security/midnight-homeassistant-911
+          path: midnight-homeassistant-911
+
+      - name: Link midnight_alerts into custom_components
+        run: |
+          ln -s "$GITHUB_WORKSPACE/midnight-homeassistant-911/custom_components/midnight_alerts" \
+                "$GITHUB_WORKSPACE/custom_components/midnight_alerts"
+
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:

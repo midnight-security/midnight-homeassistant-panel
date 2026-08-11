@@ -1,8 +1,8 @@
 {
-  "name": "Alarmo",
+  "name": "Midnight 911 Frontend Plugin",
   "render_readme": true,
   "zip_release": true,
-  "filename": "alarmo.zip",
+  "filename": "midnight_911_frontend_plugin.zip",
   "hide_default_branch": true,
   "homeassistant": "2026.5.0"
 }

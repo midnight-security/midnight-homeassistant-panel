@@ -15,12 +15,12 @@ jobs:
 
       - name: Patch manifest and zip
         run: |
-          sed -i 's/v0.0.0/${{ steps.version.outputs.version }}/' custom_components/alarmo/manifest.json
-        
-          cd custom_components/alarmo/
-          zip ../../alarmo.zip ./* frontend/dist/* -x '.*'
+          sed -i 's/v0.0.0/${{ steps.version.outputs.version }}/' custom_components/midnight_911_frontend_plugin/manifest.json
+
+          cd custom_components/midnight_911_frontend_plugin/
+          zip ../../midnight_911_frontend_plugin.zip ./* frontend/dist/* -x '.*'
       - uses: JasonEtco/upload-to-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: ./alarmo.zip application/zip
+          args: ./midnight_911_frontend_plugin.zip application/zip

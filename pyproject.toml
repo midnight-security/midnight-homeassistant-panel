@@ -1,11 +1,11 @@
 [project]
-name = "alarmo"
-version = "1.10.12"
-description = "an alarm system integration for Home Assistant."
+name = "midnight_911_frontend_plugin"
+version = "0.1.0"
+description = "Frontend companion panel for Midnight Alerts (midnight-homeassistant-911)."
 readme = "README.md"
-requires-python = "==3.13.2"
+requires-python = ">=3.14.2"
 dependencies = [
-    "homeassistant~=2025.10.0",
+    "homeassistant~=2026.7.0",
 ]
 
 [dependency-groups]
