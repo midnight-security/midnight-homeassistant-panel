@@ -1,6 +1,6 @@
 import { mdiAirplane, mdiAlertCircle, mdiCheckCircle, mdiCropPortrait, mdiDoorClosed, mdiDoorOpen, mdiFire, mdiFireAlert, mdiHome, mdiLock, mdiMoonWaningCrescent, mdiMotionSensor, mdiMotionSensorOff, mdiShield, mdiVibrate, mdiWindowClosed, mdiWindowOpen } from "@mdi/js";
 
-export const VERSION = '0.1.0';
+export const VERSION = '1.0.0';
 
 export const platform = 'midnight_911_frontend_plugin';
 export const editConfigService = 'edit_config';

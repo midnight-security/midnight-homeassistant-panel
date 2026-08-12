@@ -6972,7 +6972,7 @@ let Ss = class extends pe {
             ${ta("title", this.hass.language)}
           </div>
           <div class="version">
-            v${"0.1.0"}
+            v${"1.0.0"}
           </div>
         </div>
 
