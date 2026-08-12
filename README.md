@@ -1,16 +1,20 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="custom_components/midnight_911_frontend_plugin/brand/dark_logo.png">
-  <img alt="Midnight" src="custom_components/midnight_911_frontend_plugin/brand/logo.png" height="64">
-</picture>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="img/logo-dark.svg">
+    <img src="img/logo-light.svg" alt="Midnight" width="280">
+  </picture>
+</p>
 
-# Midnight 911 Frontend Plugin
+# Midnight 911 for Home Assistant - Frontend Plugin
 
 [![License][license-shield]](LICENSE)
 [![Validate](https://github.com/midnight-security/alarmo/actions/workflows/validate.yaml/badge.svg)](https://github.com/midnight-security/alarmo/actions/workflows/validate.yaml)
 [![Frontend Build Check](https://github.com/midnight-security/alarmo/actions/workflows/frontend-build.yaml/badge.svg)](https://github.com/midnight-security/alarmo/actions/workflows/frontend-build.yaml)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 
-Midnight 911 Frontend Plugin is the configuration panel for [Midnight 911](https://github.com/midnight-security/midnight-homeassistant-911). It has no alarm engine, storage, or dispatch logic of its own — it's a Home Assistant custom panel that renders and drives the `midnight_alerts` integration's entities and config subentries entirely from the browser, so you can set up areas, sensors, sensor groups, and users without touching YAML.
+Midnight 911 for Home Assistant Frontend Plugin is the configuration panel for [Midnight 911](https://github.com/midnight-security/midnight-homeassistant-911).
+
+It has no alarm engine, storage, or dispatch logic of its own — it's a Home Assistant custom panel that renders and drives the `midnight_alerts` integration's entities and config subentries entirely from the browser, so you can set up areas, sensors, sensor groups, and users without touching YAML.
 
 > **Requires Midnight 911.** Install and set up [`midnight_alerts`](https://github.com/midnight-security/midnight-homeassistant-911) first — this plugin checks for it on startup and will refuse to load without it. That repo covers how alarm state, arming, and 911 dispatch actually work, along with its own warnings and disclaimers.
 

@@ -48,7 +48,10 @@ jobs:
           version: latest
 
       - name: Run Tests
-        run: uv run python -m pytest tests
+        run: >
+          uv run python -m pytest tests -q
+          --cov=custom_components.midnight_911_frontend_plugin
+          --cov-report=term-missing
 
   formatting_and_linting:
     runs-on: ubuntu-latest
