@@ -8,31 +8,52 @@ on:
   workflow_dispatch:
 
 jobs:
-  hacs_validation:
+  ha_and_hacs_validation:
     runs-on: ubuntu-latest
     steps:
-      - uses: "actions/checkout@v4"
+      - uses: "actions/checkout@v5.1.0"
+
+      - name: Hassfest validation
+        uses: home-assistant/actions/hassfest@master
 
       - name: HACS validation
-        uses: "hacs/action@main"
+        uses: "hacs/action@22.5.0"
         with:
           category: "integration"
+          ignore: brands
 
   pytests:
     runs-on: ubuntu-latest
     steps:
-      - uses: "actions/checkout@v4"
+      - uses: "actions/checkout@v5.1.0"
+
+      # This integration has no config model of its own - it drives
+      # midnight_alerts' real config-subentry flows, so the test suite runs
+      # against the real package rather than a hand-maintained double that
+      # could silently drift from midnight_alerts' actual contract.
+      - name: Checkout midnight-homeassistant-911
+        uses: "actions/checkout@v5.1.0"
+        with:
+          repository: midnight-security/midnight-homeassistant-911
+          path: midnight-homeassistant-911
+
+      - name: Link midnight_alerts into custom_components
+        run: |
+          ln -s "$GITHUB_WORKSPACE/midnight-homeassistant-911/custom_components/midnight_alerts" \
+                "$GITHUB_WORKSPACE/custom_components/midnight_alerts"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v9.0.0
         with:
           version: latest
 
       - name: Run Tests
-        run: uv run pytest tests
+        run: uv run python -m pytest tests
 
   formatting_and_linting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/ruff-action@v3
+      - uses: actions/checkout@v5.1.0
+      - uses: astral-sh/ruff-action@v4.1.0
+        with:
+          version: "0.16.1"

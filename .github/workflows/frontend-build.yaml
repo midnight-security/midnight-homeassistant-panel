@@ -3,10 +3,10 @@ name: Frontend Build Check
 on:
   pull_request:
     paths:
-      - 'custom_components/alarmo/frontend/**'
+      - 'custom_components/midnight_911_frontend_plugin/frontend/**'
   push:
     paths:
-      - 'custom_components/alarmo/frontend/**'
+      - 'custom_components/midnight_911_frontend_plugin/frontend/**'
   workflow_dispatch:
 
 jobs:
@@ -14,20 +14,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5.1.0
 
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
 
       - name: Install dependencies
-        working-directory: custom_components/alarmo/frontend
+        working-directory: custom_components/midnight_911_frontend_plugin/frontend
         run: npm install
 
       - name: Run linter check
-        working-directory: custom_components/alarmo/frontend
+        working-directory: custom_components/midnight_911_frontend_plugin/frontend
         run: npm run lint:check
 
+      - name: Run unit tests
+        working-directory: custom_components/midnight_911_frontend_plugin/frontend
+        run: npm test
+
       - name: Build frontend
-        working-directory: custom_components/alarmo/frontend
+        working-directory: custom_components/midnight_911_frontend_plugin/frontend
         run: npm run build

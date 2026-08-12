@@ -1,30 +1,32 @@
 name: Bug report
-description: Create a report to help improve Alarmo
+description: Create a report to help improve Midnight 911 Frontend Plugin
 labels: bug
 body:
   - type: markdown
     attributes:
       value: |
         Thank you for taking the effort to fill in all relevant details.
-        Please make sure to include sufficient information for me to reproduce the issue, otherwise I can't help you.
+        Please make sure to include sufficient information for us to reproduce the issue, otherwise we can't help you.
   - type: checkboxes
     id: checklist
     attributes:
       label: Checklist
       description: "Before opening a bug report, please check the following:"
       options:
-        - label: I am using the latest version of Alarmo (latest version can be found [here](https://github.com/nielsfaber/alarmo/releases/latest))
+        - label: I am using the latest version of Midnight 911 Frontend Plugin (latest version can be found [here](https://github.com/midnight-security/alarmo/releases/latest))
           required: true
         - label: I checked for similar existing requests (both open and closed) before posting.
           required: true
+        - label: If this is about arm/disarm/dispatch behavior rather than the panel itself, I've confirmed it's an issue in this panel and not in [midnight_alerts](https://github.com/midnight-security/midnight-homeassistant-911).
+          required: true
   - type: input
-    id: alarmo-version
+    id: plugin-version
     attributes:
-      label: Alarmo Version
-      description: "Which version of Alarmo are you running? You can see it in the top-right corner in the Alarmo configuration panel in HA."
-      placeholder: "v1.0.0"
+      label: Midnight 911 Frontend Plugin Version
+      description: "Which version are you running? You can see it in the top-right corner of the panel in HA."
+      placeholder: "v0.1.0"
     validations:
-      required: true  
+      required: true
   - type: input
     id: hass-version
     attributes:

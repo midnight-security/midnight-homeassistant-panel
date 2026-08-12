@@ -1,0 +1,17 @@
+{
+  "domain": "midnight_911_frontend_plugin",
+  "name": "Midnight 911 Frontend Plugin",
+  "codeowners": [
+    "@josephrrusso"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "http",
+    "panel_custom"
+  ],
+  "documentation": "https://github.com/midnight-security/alarmo",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/midnight-security/alarmo/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
