@@ -1,7 +1,9 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="custom_components/midnight_911_frontend_plugin/brand/dark_logo.png">
-  <img alt="Midnight" src="custom_components/midnight_911_frontend_plugin/brand/logo.png" height="64">
-</picture>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="img/logo-dark.svg">
+    <img src="img/logo-light.svg" alt="Midnight" width="280">
+  </picture>
+</p>
 
 # Midnight 911 for Home Assistant - Frontend Plugin
 
