@@ -1,10 +1,13 @@
-"""Config flow for Midnight 911 Frontend Plugin - nothing to configure, single instance."""
+"""Config flow for Midnight 911 Frontend Plugin.
+
+Nothing to configure - single instance, no fields.
+"""
 
 import secrets
 
 from homeassistant import config_entries
 
-from .const import DOMAIN, MIDNIGHT_ALERTS_DOMAIN, NAME
+from .const import NAME, DOMAIN, MIDNIGHT_ALERTS_DOMAIN
 
 
 class MidnightAlarmUiConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

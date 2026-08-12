@@ -17,7 +17,9 @@
     "semantic-release": "semantic-release"
   },
   "release": {
-    "branches": ["main"],
+    "branches": [
+      "main"
+    ],
     "tagFormat": "${version}",
     "plugins": [
       "@semantic-release/commit-analyzer",
@@ -43,7 +45,10 @@
         "@semantic-release/github",
         {
           "assets": [
-            { "path": "midnight_911_frontend_plugin.zip", "label": "midnight_911_frontend_plugin.zip" }
+            {
+              "path": "midnight_911_frontend_plugin.zip",
+              "label": "midnight_911_frontend_plugin.zip"
+            }
           ]
         }
       ]

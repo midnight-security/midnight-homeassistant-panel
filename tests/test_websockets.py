@@ -9,11 +9,15 @@ import json
 from unittest.mock import AsyncMock, patch
 
 from homeassistant.helpers import entity_registry as er
-from pytest_homeassistant_custom_component.common import MockConfigEntry, MockUser
+from pytest_homeassistant_custom_component.common import MockUser, MockConfigEntry
 
-from custom_components.midnight_911_frontend_plugin.websockets import async_register_websockets
+from custom_components.midnight_911_frontend_plugin.websockets import (
+    async_register_websockets,
+)
 
-VALIDATE = "custom_components.midnight_alerts.api.MidnightAlertsApiClient.async_validate"
+VALIDATE = (
+    "custom_components.midnight_alerts.api.MidnightAlertsApiClient.async_validate"
+)
 
 
 async def _setup_backend(hass) -> MockConfigEntry:
@@ -30,6 +34,7 @@ async def _register(hass) -> None:
 
 
 async def test_areas_error_when_backend_not_configured(hass, hass_ws_client):
+    """`areas` errors cleanly if midnight_alerts isn't set up yet."""
     await _register(hass)
     client = await hass_ws_client(hass)
     await client.send_json({"id": 1, "type": "midnight_911_frontend_plugin/areas"})
@@ -39,6 +44,7 @@ async def test_areas_error_when_backend_not_configured(hass, hass_ws_client):
 
 
 async def test_area_create_with_independent_per_mode_timers(hass, hass_ws_client):
+    """Each arm mode keeps its own exit/entry/trigger timers, independently."""
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -71,6 +77,7 @@ async def test_area_create_with_independent_per_mode_timers(hass, hass_ws_client
 async def test_area_create_missing_mode_timers_falls_back_to_defaults(
     hass, hass_ws_client
 ):
+    """Omitting mode_timers on create falls back to the standard defaults."""
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -90,6 +97,7 @@ async def test_area_create_missing_mode_timers_falls_back_to_defaults(
 
 
 async def test_area_update_and_delete(hass, hass_ws_client):
+    """An area can be renamed/retimed, then deleted."""
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -123,7 +131,11 @@ async def test_area_update_and_delete(hass, hass_ws_client):
     assert resp["result"]["modes"]["armed_home"]["enabled"] is True
 
     await client.send_json(
-        {"id": 3, "type": "midnight_911_frontend_plugin/area/delete", "area_id": area_id}
+        {
+            "id": 3,
+            "type": "midnight_911_frontend_plugin/area/delete",
+            "area_id": area_id,
+        }
     )
     resp = await client.receive_json()
     assert resp["success"], resp
@@ -134,9 +146,11 @@ async def test_area_update_and_delete(hass, hass_ws_client):
 
 
 async def test_area_update_omitting_modes_resets_to_defaults(hass, hass_ws_client):
-    """Pins a real contract gotcha, not new backend behavior: area/update has
-    no partial-update concept - omitting enabled_modes/mode_timers doesn't
-    mean "leave them alone", it means "reset to armed_away/armed_home with
+    """Pins a real contract gotcha, not new backend behavior.
+
+    area/update has no partial-update concept - omitting
+    enabled_modes/mode_timers doesn't mean "leave them alone", it means
+    "reset to armed_away/armed_home with
     every timer back to 60/60/1800". A frontend caller that only means to
     change the area's name (create-area-dialog.ts's rename path) MUST also
     resend the area's current modes, or a plain rename silently destroys
@@ -173,11 +187,13 @@ async def test_area_update_omitting_modes_resets_to_defaults(hass, hass_ws_clien
     )
     resp = await client.receive_json()
     assert resp["success"], resp
-    assert resp["result"]["modes"]["armed_night"]["enabled"] is False  # silently dropped
+    # silently dropped
+    assert resp["result"]["modes"]["armed_night"]["enabled"] is False
     assert resp["result"]["modes"]["armed_away"]["exit_time"] == 60  # silently reset
 
 
 async def test_area_update_sensors_attach_and_detach(hass, hass_ws_client):
+    """Sensors can be attached to an area, then fully detached."""
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -233,6 +249,7 @@ async def test_area_update_sensors_attach_and_detach(hass, hass_ws_client):
 
 
 async def test_sensor_set_and_clear_options_directly(hass, hass_ws_client):
+    """A sensor's options can be set directly, then cleared back to none."""
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -293,9 +310,11 @@ async def test_sensor_set_and_clear_options_directly(hass, hass_ws_client):
 
 
 async def test_sensor_set_options_rejects_area_field(hass, hass_ws_client):
-    """`area` comes back from `sensors` (that's how the frontend knows which
-    area a sensor belongs to) but isn't a settable field on set_options -
-    assignment only happens through area/update_sensors. Regression test for
+    """`area` isn't a settable field on set_options.
+
+    It comes back from `sensors` (that's how the frontend knows which
+    area a sensor belongs to) but isn't settable here - assignment only
+    happens through area/update_sensors. Regression test for
     a real bug: the frontend's saveSensor() naively spread a fetched sensor's
     full dict (including `area`) back into this command, which voluptuous's
     extra-keys check rejects outright - every edit of an already-attached
@@ -337,6 +356,11 @@ async def test_sensor_set_options_rejects_area_field(hass, hass_ws_client):
 async def test_user_code_never_returned_and_blank_code_keeps_existing(
     hass, hass_ws_client
 ):
+    """A user's code never comes back, and blanking it on update keeps it.
+
+    Blanking the code field on update leaves the existing code unchanged
+    rather than clearing it.
+    """
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -371,7 +395,11 @@ async def test_user_code_never_returned_and_blank_code_keeps_existing(
     assert resp["result"]["can_arm"] is False
 
     await client.send_json(
-        {"id": 3, "type": "midnight_911_frontend_plugin/user/delete", "user_id": user_id}
+        {
+            "id": 3,
+            "type": "midnight_911_frontend_plugin/user/delete",
+            "user_id": user_id,
+        }
     )
     resp = await client.receive_json()
     assert resp["success"], resp
@@ -382,12 +410,14 @@ async def test_user_code_never_returned_and_blank_code_keeps_existing(
 
 
 async def test_user_update_rejects_has_code_field(hass, hass_ws_client):
-    """`has_code` is derived (computed by `users` from whether a code is
-    set), not a settable field on user/update. Regression test for a real
-    bug: user-editor-card.ts only omits `code` when loading an existing user
-    for editing, so `has_code` survived into saveUser()'s payload on every
-    edit of an already-coded user - voluptuous's extra-keys check rejected
-    it outright. Fixed by having saveUser() drop `has_code` before sending.
+    """`has_code` isn't a settable field on user/update.
+
+    It's derived (computed by `users` from whether a code is set).
+    Regression test for a real bug: user-editor-card.ts only omits `code`
+    when loading an existing user for editing, so `has_code` survived into
+    saveUser()'s payload on every edit of an already-coded user -
+    voluptuous's extra-keys check rejected it outright. Fixed by having
+    saveUser() drop `has_code` before sending.
     """
     await _setup_backend(hass)
     await _register(hass)
@@ -432,6 +462,7 @@ async def test_user_update_rejects_has_code_field(hass, hass_ws_client):
 
 
 async def test_sensor_group_count_window_and_weighted_decay(hass, hass_ws_client):
+    """A group can move from count-window mode to weighted-decay, then be deleted."""
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -478,17 +509,24 @@ async def test_sensor_group_count_window_and_weighted_decay(hass, hass_ws_client
     assert resp["result"]["threshold"] == 12.0
 
     await client.send_json(
-        {"id": 3, "type": "midnight_911_frontend_plugin/sensor_group/delete", "group_id": group_id}
+        {
+            "id": 3,
+            "type": "midnight_911_frontend_plugin/sensor_group/delete",
+            "group_id": group_id,
+        }
     )
     resp = await client.receive_json()
     assert resp["success"], resp
 
-    await client.send_json({"id": 4, "type": "midnight_911_frontend_plugin/sensor_groups"})
+    await client.send_json(
+        {"id": 4, "type": "midnight_911_frontend_plugin/sensor_groups"}
+    )
     resp = await client.receive_json()
     assert resp["result"] == {}
 
 
 async def test_entities_lists_areas_and_master(hass, hass_ws_client):
+    """`entities` lists every area plus the master, sentinel-keyed as 0."""
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
@@ -513,8 +551,9 @@ async def test_entities_lists_areas_and_master(hass, hass_ws_client):
 
 
 async def test_non_admin_user_is_refused(hass, hass_ws_client):
-    """Every command here is @require_admin - confirm that's actually enforced,
-    not just declared. A non-admin, non-owner user should be refused before
+    """Every command here is @require_admin - confirm it's actually enforced.
+
+    Not just declared. A non-admin, non-owner user should be refused before
     the handler ever runs.
     """
     await _setup_backend(hass)
@@ -532,26 +571,35 @@ async def test_non_admin_user_is_refused(hass, hass_ws_client):
     assert resp["error"]["code"] == "unauthorized"
 
 
-async def test_alarmo_import_preview_no_file(hass, hass_ws_client, tmp_path, monkeypatch):
+async def test_alarmo_import_preview_no_file(
+    hass, hass_ws_client, tmp_path, monkeypatch
+):
+    """Previewing an import with no Alarmo storage file reports it as unavailable."""
     monkeypatch.setattr(hass.config, "config_dir", str(tmp_path))
     await _setup_backend(hass)
     await _register(hass)
     client = await hass_ws_client(hass)
 
-    await client.send_json({"id": 1, "type": "midnight_911_frontend_plugin/alarmo_import/preview"})
+    await client.send_json(
+        {"id": 1, "type": "midnight_911_frontend_plugin/alarmo_import/preview"}
+    )
     resp = await client.receive_json()
     assert resp["success"], resp
     assert resp["result"] == {"available": False, "reason": "alarmo_not_found"}
 
 
-async def test_alarmo_import_preview_and_apply_against_real_storage_shape(
+async def test_alarmo_import_preview_and_apply_against_real_storage_shape(  # noqa: PLR0915
     hass, hass_ws_client, tmp_path, monkeypatch
 ):
-    """End-to-end against a fixture matching Alarmo's actual storage schema
-    (see midnight_alerts/alarmo_import.py's parse_import for the exact
-    fields read) - the flow-shape-only coverage above never actually reads
+    """End-to-end against a fixture matching Alarmo's actual storage schema.
+
+    See midnight_alerts/alarmo_import.py's parse_import for the exact
+    fields read - the flow-shape-only coverage above never actually reads
     a real file, so this is the one test that would catch drift between
-    this fixture's assumptions and Alarmo's real format.
+    this fixture's assumptions and Alarmo's real format. Deliberately one
+    long scenario test walking the full preview -> apply -> re-verify ->
+    re-import round trip, rather than split into disconnected pieces that
+    would each need to redo the same setup.
     """
     monkeypatch.setattr(hass.config, "config_dir", str(tmp_path))
     storage_dir = tmp_path / ".storage"
@@ -628,7 +676,9 @@ async def test_alarmo_import_preview_and_apply_against_real_storage_shape(
     await _register(hass)
     client = await hass_ws_client(hass)
 
-    await client.send_json({"id": 1, "type": "midnight_911_frontend_plugin/alarmo_import/preview"})
+    await client.send_json(
+        {"id": 1, "type": "midnight_911_frontend_plugin/alarmo_import/preview"}
+    )
     resp = await client.receive_json()
     assert resp["success"], resp
     result = resp["result"]
@@ -674,7 +724,9 @@ async def test_alarmo_import_preview_and_apply_against_real_storage_shape(
     assert imported_user["name"] == "Alice"
     assert imported_user["has_code"] is True
 
-    await client.send_json({"id": 5, "type": "midnight_911_frontend_plugin/sensor_groups"})
+    await client.send_json(
+        {"id": 5, "type": "midnight_911_frontend_plugin/sensor_groups"}
+    )
     resp = await client.receive_json()
     assert resp["success"], resp
     imported_group = next(iter(resp["result"].values()))
@@ -683,7 +735,9 @@ async def test_alarmo_import_preview_and_apply_against_real_storage_shape(
 
     # Re-running the preview against the same file must recognize the
     # already-imported unique_ids, not offer to duplicate everything.
-    await client.send_json({"id": 6, "type": "midnight_911_frontend_plugin/alarmo_import/preview"})
+    await client.send_json(
+        {"id": 6, "type": "midnight_911_frontend_plugin/alarmo_import/preview"}
+    )
     resp = await client.receive_json()
     assert resp["success"], resp
     flow_id_2 = resp["result"]["flow_id"]

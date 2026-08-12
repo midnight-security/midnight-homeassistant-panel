@@ -2,10 +2,10 @@
 
 import logging
 
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import issue_registry as ir
+from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.config_entries import ConfigEntry
 
 from . import const
 from .panel import async_register_panel, async_unregister_panel
@@ -39,7 +39,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             "configure it before this panel has anything to show"
         )
 
-    ir.async_delete_issue(hass, const.DOMAIN, const.MIDNIGHT_ALERTS_NOT_INSTALLED_ISSUE_ID)
+    ir.async_delete_issue(
+        hass, const.DOMAIN, const.MIDNIGHT_ALERTS_NOT_INSTALLED_ISSUE_ID
+    )
     await async_register_panel(hass)
     await async_register_websockets(hass)
     return True
@@ -47,6 +49,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload the companion panel."""
-    ir.async_delete_issue(hass, const.DOMAIN, const.MIDNIGHT_ALERTS_NOT_INSTALLED_ISSUE_ID)
+    ir.async_delete_issue(
+        hass, const.DOMAIN, const.MIDNIGHT_ALERTS_NOT_INSTALLED_ISSUE_ID
+    )
     async_unregister_panel(hass)
     return True

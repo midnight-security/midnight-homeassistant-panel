@@ -1046,6 +1046,15 @@ wheels = [
 ]
 
 [[package]]
+name = "home-assistant-frontend"
+version = "20260729.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e2/1c/39069b735e3de7668db976bc2571cb0a18f202f3087e3a30306db3a1f5df/home_assistant_frontend-20260729.6.tar.gz", hash = "sha256:678915586cdb0e4ac0dfed925afb8edd73082d0a69cf1b703807f0395fe777b8", size = 124324761, upload-time = "2026-08-07T15:07:29.975Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/db/5b/53af4c787b5572be4b7a10ad3a4561dc1dd14cf9ad521e039bce527d22b1/home_assistant_frontend-20260729.6-py3-none-any.whl", hash = "sha256:a0135368de2ba751bfde067de4f5d85d89817e3eda4e20b5ec4e91b7ed3dd755", size = 124257839, upload-time = "2026-08-07T15:07:24.569Z" },
+]
+
+[[package]]
 name = "homeassistant"
 version = "2026.7.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1300,7 +1309,7 @@ wheels = [
 ]
 
 [[package]]
-name = "midnight-alarm-ui"
+name = "midnight-911-frontend-plugin"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
@@ -1309,6 +1318,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "home-assistant-frontend" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -1321,6 +1331,7 @@ requires-dist = [{ name = "homeassistant", specifier = "~=2026.7.0" }]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "home-assistant-frontend" },
     { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "pytest-asyncio", specifier = ">=0.26.0" },

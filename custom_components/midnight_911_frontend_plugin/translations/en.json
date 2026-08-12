@@ -1,5 +1,8 @@
 {
   "config": {
+    "step": {
+      "user": {}
+    },
     "abort": {
       "single_instance_allowed": "Already configured. Only a single instance is allowed.",
       "midnight_alerts_not_installed": "The Midnight 911 Integration (midnight_alerts) must be installed and set up first - this panel has nothing to show without it."

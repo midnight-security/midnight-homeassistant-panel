@@ -26,12 +26,12 @@ from __future__ import annotations
 from typing import Any, Literal
 
 import voluptuous as vol
-from homeassistant.components import websocket_api
-from homeassistant.components.websocket_api import ActiveConnection
-from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import entity_registry as er
+from homeassistant.components import websocket_api
+from homeassistant.config_entries import ConfigEntry, ConfigSubentry
+from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.components.websocket_api import ActiveConnection
 
 from .const import MIDNIGHT_ALERTS_DOMAIN
 
@@ -90,6 +90,7 @@ class AdapterError(Exception):
     """A subentry flow rejected the request, or nothing is configured yet."""
 
     def __init__(self, code: str, message: str) -> None:
+        """Store the machine-readable code alongside the human-readable message."""
         super().__init__(message)
         self.code = code
         self.message = message
@@ -112,7 +113,9 @@ async def _configure_through(
     """Submit one dict of user_input per remaining form/menu step in the flow."""
     for step_input in steps:
         if result["type"] not in (FlowResultType.FORM, FlowResultType.MENU):
-            raise AdapterError("unexpected_flow_state", "Flow ended earlier than expected")
+            raise AdapterError(
+                "unexpected_flow_state", "Flow ended earlier than expected"
+            )
         result = await hass.config_entries.subentries.async_configure(
             result["flow_id"], step_input
         )
@@ -265,7 +268,9 @@ def _set_sensor_options(hass: HomeAssistant, entity_id: str, **fields: Any) -> N
 
 def _clear_sensor_options(hass: HomeAssistant, entity_id: str) -> None:
     """Detach a sensor from Midnight Alerts entirely."""
-    er.async_get(hass).async_update_entity_options(entity_id, MIDNIGHT_ALERTS_DOMAIN, None)
+    er.async_get(hass).async_update_entity_options(
+        entity_id, MIDNIGHT_ALERTS_DOMAIN, None
+    )
 
 
 def _sensors_for_area(hass: HomeAssistant, area_subentry_id: str) -> list[str]:
@@ -295,7 +300,9 @@ def _parse_sensor_state(state: str | None) -> str:
 def _require_backend(func):
     """Resolve the backend entry, or send a websocket error and bail out."""
 
-    async def wrapper(hass: HomeAssistant, connection: ActiveConnection, msg: dict) -> None:
+    async def wrapper(
+        hass: HomeAssistant, connection: ActiveConnection, msg: dict
+    ) -> None:
         try:
             entry = _get_backend_entry(hass)
         except AdapterError as err:
@@ -310,7 +317,9 @@ def _require_backend(func):
 
 
 @websocket_api.require_admin
-@websocket_api.websocket_command({vol.Required("type"): "midnight_911_frontend_plugin/areas"})
+@websocket_api.websocket_command(
+    {vol.Required("type"): "midnight_911_frontend_plugin/areas"}
+)
 @websocket_api.async_response
 @_require_backend
 async def websocket_get_areas(hass, connection, msg, entry):
@@ -324,7 +333,9 @@ async def websocket_get_areas(hass, connection, msg, entry):
 
 
 @websocket_api.require_admin
-@websocket_api.websocket_command({vol.Required("type"): "midnight_911_frontend_plugin/users"})
+@websocket_api.websocket_command(
+    {vol.Required("type"): "midnight_911_frontend_plugin/users"}
+)
 @websocket_api.async_response
 @_require_backend
 async def websocket_get_users(hass, connection, msg, entry):
@@ -354,7 +365,9 @@ async def websocket_get_sensor_groups(hass, connection, msg, entry):
 
 
 @websocket_api.require_admin
-@websocket_api.websocket_command({vol.Required("type"): "midnight_911_frontend_plugin/sensors"})
+@websocket_api.websocket_command(
+    {vol.Required("type"): "midnight_911_frontend_plugin/sensors"}
+)
 @websocket_api.async_response
 @_require_backend
 async def websocket_get_sensors(hass, connection, msg, entry):
@@ -376,7 +389,9 @@ async def websocket_get_sensors(hass, connection, msg, entry):
 
 
 @websocket_api.require_admin
-@websocket_api.websocket_command({vol.Required("type"): "midnight_911_frontend_plugin/entities"})
+@websocket_api.websocket_command(
+    {vol.Required("type"): "midnight_911_frontend_plugin/entities"}
+)
 @websocket_api.async_response
 @_require_backend
 async def websocket_get_entities(hass, connection, msg, entry):
@@ -623,7 +638,10 @@ _SENSOR_GROUP_FIELDS = {
 
 @websocket_api.require_admin
 @websocket_api.websocket_command(
-    {vol.Required("type"): "midnight_911_frontend_plugin/sensor_group/create", **_SENSOR_GROUP_FIELDS}
+    {
+        vol.Required("type"): "midnight_911_frontend_plugin/sensor_group/create",
+        **_SENSOR_GROUP_FIELDS,
+    }
 )
 @websocket_api.async_response
 @_require_backend
