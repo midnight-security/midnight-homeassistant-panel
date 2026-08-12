@@ -1,0 +1,60 @@
+{
+  "name": "midnight_911_frontend_plugin",
+  "version": "0.1.0",
+  "description": "Midnight Security 911 Frontend Plugin for Home Assistant",
+  "homepage": "https://midnight.security/",
+  "author": "Midnight Security, Inc. <team@midnight.security> (https://midnight.security)",
+  "contributors": [
+    "Original Author @nielsfaber (https://github.com/nielsfaber)"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/midnight-security/midnight-homeassistant-panel.git"
+  },
+  "private": false,
+  "packageManager": "yarn@1.22.22",
+  "scripts": {
+    "semantic-release": "semantic-release"
+  },
+  "release": {
+    "branches": ["main"],
+    "tagFormat": "${version}",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "bash custom_components/midnight_911_frontend_plugin/release-prepare.sh ${nextRelease.version}"
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "custom_components/midnight_911_frontend_plugin/manifest.json",
+            "custom_components/midnight_911_frontend_plugin/frontend/src/const.ts",
+            "custom_components/midnight_911_frontend_plugin/frontend/dist/alarm-panel.js"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            { "path": "midnight_911_frontend_plugin.zip", "label": "midnight_911_frontend_plugin.zip" }
+          ]
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/github": "^12.0.9",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "semantic-release": "^25.0.8"
+  }
+}
