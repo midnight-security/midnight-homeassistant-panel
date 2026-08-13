@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Questions/discussion
-    url: https://github.com/midnight-security/alarmo/discussions
-    about: Ask questions, discuss configuration, share your setup
+  - name: Security vulnerability
+    url: mailto:engineering@midnight.security
+    about: Report security vulnerabilities privately - do not open a public issue. See SECURITY.md.
